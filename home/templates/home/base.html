@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}My Application{% endblock %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --primary-light: rgba(99, 102, 241, 0.1);
+            --text-light: #ffffff;
+            --text-muted: #e2e8f0;
+            --bg-dark: #0f172a;
+            --bg-dark-transparent: rgba(15, 23, 42, 0.95);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-slow: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+            --radius-full: 9999px;
+        }
+
+        /* Modern Glass Navigation Bar */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: var(--bg-dark-transparent);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            box-shadow: var(--shadow-lg);
+            z-index: 100;
+            padding: 0.5rem 2rem;
+            display: flex;
+            justify-content: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 0.5rem;
+            margin: 0;
+            padding: 0;
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        nav ul li {
+            position: relative;
+        }
+
+        nav ul li a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.75rem 1.25rem;
+            border-radius: var(--radius-full);
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.95rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Hover Effect */
+        nav ul li a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--primary-light);
+            transform: scaleX(0);
+            transform-origin: right;
+            transition: transform 0.5s ease;
+            z-index: -1;
+            border-radius: var(--radius-full);
+        }
+
+        nav ul li a:hover {
+            color: var(--text-light);
+            transform: translateY(-2px);
+        }
+
+        nav ul li a:hover::before {
+            transform: scaleX(1);
+            transform-origin: left;
+        }
+
+        /* Active State */
+        nav ul li a.active {
+            color: var(--text-light);
+            background: var(--primary);
+            box-shadow: 0 4px 6px -1px rgba(99, 102, 241, 0.3), 0 2px 4px -2px rgba(99, 102, 241, 0.3);
+        }
+
+        /* Icon Animation */
+        nav ul li a i {
+            transition: var(--transition);
+        }
+
+        nav ul li a:hover i {
+            transform: scale(1.1);
+            color: var(--text-light);
+        }
+
+        /* Pulsing Indicator */
+        nav ul li a.active::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 6px;
+            height: 6px;
+            background: var(--text-light);
+            border-radius: var(--radius-full);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: translateX(-50%) scale(1); opacity: 1; }
+            50% { transform: translateX(-50%) scale(1.5); opacity: 0.7; }
+            100% { transform: translateX(-50%) scale(1); opacity: 1; }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            nav {
+                padding: 0.5rem 1rem;
+            }
+            
+            nav ul li a {
+                padding: 0.6rem 1rem;
+                font-size: 0.85rem;
+                gap: 0.5rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            nav ul {
+                justify-content: space-around;
+            }
+            
+            nav ul li a span {
+                display: none;
+            }
+            
+            nav ul li a {
+                padding: 0.75rem;
+                border-radius: var(--radius-full);
+                justify-content: center;
+            }
+            
+            nav ul li a i {
+                font-size: 1.1rem;
+                margin: 0;
+            }
+        }
+
+        @media (max-width: 480px) {
+            nav ul li a {
+                padding: 0.65rem;
+            }
+        }
+
+        /* Add margin to container to account for fixed nav */
+        .container {
+            margin-top: 68px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Modern Fixed Navigation Bar -->
+    <nav>
+        <ul>
+            <li><a href="{% url 'dashboard' %}" class="active"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a></li>
+            <li><a href="{% url 'customer' %}"><i class="fas fa-users"></i> <span>Customers</span></a></li>
+            <li><a href="{% url 'completed_work' %}"><i class="fas fa-check-circle"></i> <span>Completed</span></a></li>
+            <li><a href="{% url 'ongoing_work' %}"><i class="fas fa-tasks"></i> <span>Ongoing</span></a></li>
+            <li><a href="{% url 'payment_history' %}"><i class="fas fa-history"></i> <span>Payments</span></a></li>
+            <li><a href="{% url 'services' %}"><i class="fas fa-project-diagram"></i> <span>Projects</span></a></li>
+            <li><a href="{% url 'send_email' %}"><i class="fas fa-envelope"></i> <span>Email</span></a></li>
+            <li><a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a></li>
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container">
+        {% block content %}
+        <!-- Page-specific content will go here -->
+        {% endblock %}
+    </div>
+</body>
+</html>

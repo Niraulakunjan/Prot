@@ -1,0 +1,566 @@
+{% extends 'home/base.html' %}
+
+{% block title %}Customer List{% endblock %}
+
+{% block content %}
+<style>
+    :root {
+        --primary: #4361ee;
+        --primary-light: #4895ef;
+        --secondary: #3f37c9;
+        --dark: #1b263b;
+        --light: #f8f9fa;
+        --success: #4cc9f0;
+        --danger: #f72585;
+        --warning: #f8961e;
+        --info: #560bad;
+        --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+
+    .customer-container {
+        max-width: 1400px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+    }
+
+    .customer-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+        position: relative;
+    }
+
+    .customer-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--dark);
+        margin: 0;
+    }
+
+    .customer-actions {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+        flex-grow: 1;
+        justify-content: center;
+    }
+
+    .search-container {
+        position: relative;
+        width: 100%;
+        max-width: 400px;
+        display: flex;
+        align-items: center;
+    }
+
+    .search-input {
+        width: 100%;
+        padding: 0.75rem 2.5rem 0.75rem 1rem; /* Adjusted padding-right */
+        border-radius: 8px;
+        border: 1px solid #e2e8f0;
+        background-color: white;
+        font-size: 0.9rem;
+        transition: var(--transition);
+        box-shadow: var(--card-shadow);
+    }
+
+    .search-input:focus {
+        outline: none;
+        border-color: var(--primary-light);
+        box-shadow: 0 0 0 3px rgba(72, 149, 239, 0.2);
+    }
+
+    .search-button {
+        position: absolute;
+        left: 17rem; /* Reduced right offset */
+        top: 50%;
+        transform: translateY(-50%);
+        width: 32px;
+        height: 32px;
+        border-radius: 30%;
+        background-color: var(--primary);
+        color: white;
+        border: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: var(--transition);
+    }
+
+    .search-button:hover {
+        background-color: var(--secondary);
+    }
+
+    .search-button i {
+        font-size: 0.9rem;
+    }
+
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: var(--transition);
+        border: none;
+        font-size: 0.9rem;
+    }
+
+    .btn-primary {
+        background-color: var(--primary);
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background-color: var(--secondary);
+        transform: translateY(-2px);
+    }
+
+    .btn-icon {
+        margin-right: 0.5rem;
+    }
+
+    .fab {
+        position: fixed;
+        bottom: 2rem;
+        right: 2rem;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background-color: var(--primary);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        border: none;
+        cursor: pointer;
+        transition: var(--transition);
+        z-index: 100;
+    }
+
+    .fab:hover {
+        background-color: var(--secondary);
+        transform: scale(1.1);
+    }
+
+    .fab i {
+        font-size: 1.5rem;
+    }
+
+    .customer-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 1.5rem;
+        margin-top: 2rem;
+    }
+
+    .customer-card {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: var(--card-shadow);
+        transition: var(--transition);
+        border: 1px solid #e2e8f0;
+    }
+
+    .customer-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+
+    .customer-name {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--dark);
+        margin-bottom: 0.5rem;
+    }
+
+    .customer-email {
+        color: #64748b;
+        font-size: 0.9rem;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .customer-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 1.5rem;
+        padding-top: 1rem;
+        border-top: 1px dashed #e2e8f0;
+    }
+
+    .customer-date {
+        font-size: 0.8rem;
+        color: #94a3b8;
+    }
+
+    .customer-actions {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .action-btn {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        transition: var(--transition);
+    }
+
+    .action-btn:hover {
+        background: #f1f5f9;
+    }
+
+    .action-btn.edit {
+        color: var(--primary);
+    }
+
+    .action-btn.delete {
+        color: var(--danger);
+    }
+
+    .empty-state {
+        grid-column: 1 / -1;
+        text-align: center;
+        padding: 3rem;
+        color: #64748b;
+    }
+
+    .empty-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        color: #cbd5e1;
+    }
+
+    /* Modal Styles */
+    .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+    }
+
+    .modal-overlay.active {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    .modal-content {
+        background: white;
+        border-radius: 12px;
+        width: 100%;
+        max-width: 500px;
+        padding: 2rem;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        transform: translateY(-20px);
+        transition: all 0.3s ease;
+    }
+
+    .modal-overlay.active .modal-content {
+        transform: translateY(0);
+    }
+
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .modal-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--dark);
+        margin: 0;
+    }
+
+    .close-btn {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+        color: #64748b;
+        transition: var(--transition);
+    }
+
+    .close-btn:hover {
+        color: var(--danger);
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+        color: var(--dark);
+    }
+
+    .form-input {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border-radius: 8px;
+        border: 1px solid #e2e8f0;
+        font-size: 0.9rem;
+        transition: var(--transition);
+    }
+
+    .form-input:focus {
+        outline: none;
+        border-color: var(--primary-light);
+        box-shadow: 0 0 0 3px rgba(72, 149, 239, 0.2);
+    }
+
+    .form-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+
+    .btn-secondary {
+        background-color: #e2e8f0;
+        color: var(--dark);
+    }
+
+    .btn-secondary:hover {
+        background-color: #cbd5e1;
+    }
+
+    @media (max-width: 768px) {
+        .customer-header {
+            flex-direction: column;
+            align-items: stretch;
+        }
+        
+        .search-container {
+            max-width: 100%;
+        }
+        
+        .customer-actions {
+            justify-content: center;
+        }
+    }
+</style>
+
+<div class="customer-container">
+    <div class="customer-header">
+        <h1 class="customer-title">Customer Directory</h1>
+        
+        <div class="customer-actions">
+            <div class="search-container">
+                <form method="GET" action="{% url 'customer' %}" id="searchForm">
+                    <input 
+                        type="text" 
+                        class="search-input" 
+                        name="q" 
+                        placeholder="Search customers..." 
+                        value="{{ request.GET.q }}"
+                    >
+                    <button type="submit" class="search-button" aria-label="Search">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+        
+        <button class="fab" id="addCustomerBtn" aria-label="Add Customer">
+            <i class="fas fa-plus"></i>
+        </button>
+    </div>
+
+    <div class="customer-grid">
+        {% if customers %}
+            {% for customer in customers %}
+                <div class="customer-card">
+                    <h3 class="customer-name">{{ customer.name }}</h3>
+                    <p class="customer-email">
+                        <i class="fas fa-envelope"></i>
+                        {{ customer.email }}
+                    </p>
+                    
+                    <div class="customer-meta">
+                        <span class="customer-date">
+                            <i class="far fa-calendar-alt"></i>
+                            {{ customer.date_added|date:"M d, Y" }}
+                        </span>
+                        
+                        <div class="customer-actions">
+                            <button class="action-btn edit">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="action-btn delete">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-state">
+                <div class="empty-icon">
+                    <i class="fas fa-users-slash"></i>
+                </div>
+                <h3>No Customers Found</h3>
+                <p>Add your first customer to get started</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Add Customer Modal -->
+<div class="modal-overlay" id="customerModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 class="modal-title">Add New Customer</h3>
+            <button class="close-btn" id="closeModalBtn">×</button>
+        </div>
+        
+        <form method="POST" action="{% url 'add_customer' %}">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="name" class="form-label">Full Name</label>
+                <input 
+                    type="text" 
+                    id="name" 
+                    name="name" 
+                    class="form-input" 
+                    placeholder="John Doe" 
+                    required
+                >
+            </div>
+            
+            <div class="form-group">
+                <label for="email" class="form-label">Email Address</label>
+                <input 
+                    type="email" 
+                    id="email" 
+                    name="email" 
+                    class="form-input" 
+                    placeholder="john@example.com" 
+                    required
+                >
+            </div>
+            
+            <div class="form-group">
+                <label for="date_added" class="form-label">Date Added</label>
+                <input 
+                    type="date" 
+                    id="date_added" 
+                    name="date_added" 
+                    class="form-input" 
+                    required
+                >
+            </div>
+            
+            <div class="form-footer">
+                <button type="button" class="btn btn-secondary" id="cancelModalBtn">
+                    Cancel
+                </button>
+                <button type="submit" class="btn btn-primary">
+                    Add Customer
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    // Modal functionality
+    const modal = document.getElementById('customerModal');
+    const openBtn = document.getElementById('addCustomerBtn');
+    const closeBtn = document.getElementById('closeModalBtn');
+    const cancelBtn = document.getElementById('cancelModalBtn');
+
+    openBtn.addEventListener('click', () => {
+        modal.classList.add('active');
+    });
+
+    closeBtn.addEventListener('click', () => {
+        modal.classList.remove('active');
+    });
+
+    cancelBtn.addEventListener('click', () => {
+        modal.classList.remove('active');
+    });
+
+    // Close modal when clicking outside
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            modal.classList.remove('active');
+        }
+    });
+
+    // Search functionality with 6-second debounce
+    const searchInput = document.querySelector('.search-input');
+    const searchForm = document.getElementById('searchForm');
+    let debounceTimeout;
+
+    {% comment %} function debounceSearch() {
+        clearTimeout(debounceTimeout);
+        debounceTimeout = setTimeout(() => {
+            if (searchInput.value.length > 2 || searchInput.value.length === 0) {
+                searchForm.submit();
+            }
+        }, 6000); // 6-second delay
+    } {% endcomment %}
+
+    searchInput.addEventListener('input', (e) => {
+        // Prevent default form submission on Enter
+        if (e.inputType === 'insertFromPaste' || e.inputType === 'deleteContentBackward' || e.inputType === 'insertText') {
+            searchInput.focus(); // Ensure focus remains
+            debounceSearch();
+        }
+    });
+
+    searchInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault(); // Prevent immediate form submission
+            clearTimeout(debounceTimeout); // Cancel pending debounce
+            if (searchInput.value.length > 2 || searchInput.value.length === 0) {
+                searchForm.submit(); // Submit immediately on Enter
+            }
+        }
+    });
+
+    // Prevent focus loss during typing
+    searchInput.addEventListener('blur', (e) => {
+        clearTimeout(debounceTimeout);
+        debounceTimeout = setTimeout(() => {
+            // Allow blur after 6 seconds of inactivity
+        }, 6000);
+        setTimeout(() => {
+            searchInput.focus(); // Re-focus immediately to prevent blur
+        }, 0);
+    });
+</script>
+
+{% endblock %}

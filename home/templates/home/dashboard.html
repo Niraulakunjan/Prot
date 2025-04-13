@@ -1,0 +1,91 @@
+{% extends 'home/base.html' %}
+
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<style>
+    /* General Styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f9;
+    color: #333;
+}
+
+/* Navigation Bar */
+nav {
+    background-color: #007bff;
+    padding: 10px 20px;
+}
+
+nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: space-around;
+}
+
+nav ul li {
+    display: inline;
+}
+
+nav ul li a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    padding: 10px 15px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+nav ul li a:hover {
+    background-color: #0056b3;
+}
+
+/* User Details Section */
+.user-details {
+    max-width: 600px;
+    margin: 20px auto;
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.user-details h1 {
+    text-align: center;
+    color: #007bff;
+    margin-bottom: 20px;
+}
+
+.user-details p {
+    font-size: 16px;
+    margin: 10px 0;
+}
+
+.user-details p strong {
+    color: #555;
+}
+</style>
+<body>
+    <!-- Navigation Bar -->
+    {% comment %} <nav>
+        <ul>
+            <li><a href="{% url 'customer' %}">Customer</a></li>
+            <li><a href="{% url 'completed_work' %}">Completed Work</a></li>
+            <li><a href="{% url 'ongoing_work' %}">Ongoing Work</a></li>
+            <li><a href="{% url 'payment_history' %}">Payment History</a></li>
+            <li><a href="{% url 'send_email' %}">Send Email</a></li>
+        </ul>
+    </nav> {% endcomment %}
+
+    <!-- User Details Section -->
+    <div class="user-details">
+        <h1>User Details</h1>
+        <p><strong>Name:</strong> {{ user.name }}</p>
+        <p><strong>Email:</strong> {{ user.email }}</p>
+        <p><strong>Phone:</strong> {{ user.phone }}</p>
+        <p><strong>Address:</strong> {{ user.address }}</p>
+    </div>
+    {% endblock %}

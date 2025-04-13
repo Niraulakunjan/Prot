@@ -1,0 +1,404 @@
+{% extends 'home/base.html' %}
+
+{% block title %}Completed Work{% endblock %}
+{% block content %}
+<style>
+    :root {
+        --primary: #4361ee;
+        --primary-light: #4895ef;
+        --secondary: #3f37c9;
+        --dark: #000000; /* Black for text */
+        --light: #f8f9fa;
+        --success: #34d399;
+        --danger: #f72585;
+        --warning: #fbbf24;
+        --info: #560bad;
+        --gradient: linear-gradient(135deg, #4361ee, #34d399);
+        --glass-bg: rgba(255, 255, 255, 0.1);
+        --card-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        --transition: all 0.3s ease-out;
+    }
+
+    .work-container {
+        max-width: 1440px;
+        margin: 0 auto;
+        padding: 2rem 1rem;
+        min-height: 100vh;
+        background: linear-gradient(to bottom, #f0f4f8, #ffffff);
+    }
+
+    .work-header {
+        position: sticky;
+        top: 1rem;
+        z-index: 10;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+        background: var(--glass-bg);
+        backdrop-filter: blur(10px);
+        border-radius: 16px;
+        padding: 1rem 2rem;
+        box-shadow: var(--card-shadow);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .work-title {
+        font-size: 2.25rem;
+        font-weight: 800;
+        color: var(--dark); /* Solid black */
+        margin: 0;
+    }
+
+    .work-actions {
+        flex-grow: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .search-container {
+        position: relative;
+        width: 100%;
+        max-width: 250px;
+    }
+
+    .search-input {
+        width: 100%;
+        padding: 0.7rem 2rem 0.7rem 1rem;
+        border-radius: 10px;
+        border: none;
+        background: rgba(255, 255, 255, 0.9);
+        font-size: 0.9rem;
+        font-weight: 500;
+        color: var(--dark);
+        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05), 0 2px 8px rgba(0, 0, 0, 0.1);
+        transition: var(--transition);
+    }
+
+    .search-input:focus {
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.3), inset 0 2px 4px rgba(0, 0, 0, 0.05);
+        background: white;
+    }
+
+    .search-button {
+        position: absolute;
+        right: 0.4rem;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background: var(--gradient);
+        color: #808080; /* Grey for icon */
+        border: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: var(--transition);
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    }
+
+    .search-button:hover {
+        transform: translateY(-50%) scale(1.05);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .search-button i {
+        font-size: 0.85rem;
+    }
+
+    .work-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 2rem;
+        margin-top: 3rem;
+    }
+
+    .work-card {
+        background: white;
+        border-radius: 16px;
+        padding: 1.75rem;
+        box-shadow: var(--card-shadow);
+        transition: var(--transition);
+        border: 1px solid rgba(226, 232, 240, 0.5);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .work-card:hover {
+        transform: translateY(-8px) scale(1.02);
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+    }
+
+    .work-card::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: var(--gradient);
+        opacity: 0.05;
+        transform: rotate(30deg);
+        transition: var(--transition);
+    }
+
+    .work-card:hover::before {
+        opacity: 0.1;
+    }
+
+    .work-name {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--dark); /* Black */
+        margin-bottom: 0.75rem;
+        line-height: 1.2;
+    }
+
+    .work-amount {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--success);
+        background: rgba(52, 211, 153, 0.1);
+        padding: 0.4rem 1rem;
+        border-radius: 20px;
+        display: inline-block;
+        margin-bottom: 1rem;
+    }
+
+    .work-detail {
+        color: #64748b;
+        font-size: 0.95rem;
+        margin-bottom: 0.75rem;
+        display: flex;
+        align-items: flex-start;
+        gap: 0.75rem;
+        line-height: 1.5;
+    }
+
+    .work-detail i {
+        color: #808080; /* Grey for icons */
+        font-size: 1rem;
+        margin-top: 0.2rem;
+    }
+
+    .work-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 1.25rem;
+        padding-top: 1rem;
+        border-top: 1px dashed rgba(226, 232, 240, 0.7);
+    }
+
+    .work-date {
+        font-size: 0.85rem;
+        color: #94a3b8;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .work-actions {
+        display: flex;
+        gap: 0.75rem;
+    }
+
+    .action-btn {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.9);
+        border: 1px solid rgba(226, 232, 240, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: var(--transition);
+    }
+
+    .action-btn:hover {
+        background: var(--primary);
+        color: white;
+        transform: scale(1.1);
+    }
+
+    .action-btn.edit {
+        color: var(--primary);
+    }
+
+    .action-btn.delete {
+        color: var(--danger);
+    }
+
+    .action-btn:hover.edit,
+    .action-btn:hover.delete {
+        color: white;
+    }
+
+    .empty-state {
+        grid-column: 1 / -1;
+        text-align: center;
+        padding: 4rem;
+        background: var(--glass-bg);
+        border-radius: 16px;
+        box-shadow: var(--card-shadow);
+        margin: 2rem 0;
+    }
+
+    .empty-icon {
+        font-size: 4rem;
+        margin-bottom: 1.5rem;
+        color: rgba(148, 163, 184, 0.5);
+        animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+    }
+
+    .empty-state h3 {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: var(--dark); /* Black */
+        margin-bottom: 0.5rem;
+    }
+
+    .empty-state p {
+        font-size: 1rem;
+        color: #64748b;
+    }
+
+    @media (max-width: 768px) {
+        .work-header {
+            flex-direction: column;
+            padding: 1rem;
+        }
+        
+        .search-container {
+            max-width: 100%;
+        }
+        
+        .work-grid {
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+        
+        .work-title {
+            font-size: 1.75rem;
+        }
+    }
+</style>
+
+<div class="work-container">
+    <div class="work-header">
+        <h1 class="work-title">Completed Work</h1>
+        
+        <div class="work-actions">
+            <div class="search-container">
+                <form method="GET" action="{% url 'completed_work' %}" id="searchForm">
+                    <input 
+                        type="text" 
+                        class="search-input" 
+                        name="q" 
+                        placeholder="Search completed work..." 
+                        value="{{ request.GET.q }}"
+                    >
+                    <button type="submit" class="search-button" aria-label="Search">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="work-grid">
+        {% if completed_works %}
+            {% for work in completed_works %}
+                <div class="work-card">
+                    <h3 class="work-name">{{ work.project_name }}</h3>
+                    <span class="work-amount">RS {{ work.amount }}</span>
+                    <p class="work-detail">
+                        <i class="fas fa-user"></i>
+                        {{ work.customer_name }}
+                    </p>
+                    <p class="work-detail">
+                        <i class="fas fa-info-circle"></i>
+                        {{ work.description }}
+                    </p>
+                    <div class="work-meta">
+                        <span class="work-date">
+                            <i class="fas fa-calendar-check"></i>
+                            {{ work.date|date:"M d, Y" }}
+                        </span>
+                        <div class="work-actions">
+                            <button class="action-btn edit" aria-label="Edit">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="action-btn delete" aria-label="Delete">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-state">
+                <div class="empty-icon">
+                    <i class="fas fa-tasks"></i>
+                </div>
+                <h3>No Completed Work Found</h3>
+                <p>No completed projects available</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+    // Search functionality with 6-second debounce
+    const searchInput = document.querySelector('.search-input');
+    const searchForm = document.getElementById('searchForm');
+    let debounceTimeout;
+
+    function debounceSearch() {
+        clearTimeout(debounceTimeout);
+        debounceTimeout = setTimeout(() => {
+            if (searchInput.value.length > 2 || searchInput.value.length === 0) {
+                searchForm.submit();
+            }
+        }, 6000); // 6-second delay
+    }
+
+    searchInput.addEventListener('input', (e) => {
+        if (e.inputType === 'insertFromPaste' || e.inputType === 'deleteContentBackward' || e.inputType === 'insertText') {
+            searchInput.focus();
+            debounceSearch();
+        }
+    });
+
+    searchInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            clearTimeout(debounceTimeout);
+            if (searchInput.value.length > 2 || searchInput.value.length === 0) {
+                searchForm.submit();
+            }
+        }
+    });
+
+    searchInput.addEventListener('blur', (e) => {
+        clearTimeout(debounceTimeout);
+        debounceTimeout = setTimeout(() => {
+            // Allow blur after 6 seconds
+        }, 6000);
+        setTimeout(() => {
+            searchInput.focus();
+        }, 0);
+    });
+</script>
+{% endblock %}

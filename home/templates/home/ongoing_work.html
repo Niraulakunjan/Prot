@@ -1,0 +1,654 @@
+ {% extends 'home/base.html' %}
+
+{% block title %}Ongoing Work{% endblock %}
+
+{% block content %}
+<style>
+    /* Modern Theme Variables */
+    :root {
+        --primary: #4361ee;
+        --primary-light: #4895ef;
+        --secondary: #3f37c9;
+        --accent: #f72585;
+        --dark: #1b263b;
+        --light: #f8f9fa;
+        --gray: #6c757d;
+        --light-gray: #e9ecef;
+        --success: #4cc9f0;
+        --warning: #f8961e;
+        --danger: #ef233c;
+        --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        --elevation-1: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+        --elevation-2: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+        --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+
+    /* Base Styles */
+    body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        background-color: #f5f7fa;
+        color: var(--dark);
+    }
+
+    .ongoing-work-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem 1rem;
+        animation: fadeIn 0.5s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Header Styles */
+    .page-header {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 2rem;
+    }
+
+    @media (min-width: 768px) {
+        .page-header {
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+        }
+    }
+
+    .page-title {
+        font-size: 1.875rem;
+        font-weight: 700;
+        color: var(--dark);
+        margin-bottom: 1rem;
+    }
+
+    /* Search Bar */
+    .search-container {
+        position: relative;
+        width: 100%;
+        max-width: 300px;
+    }
+
+    .search-input {
+        width: 100%;
+        padding: 0.75rem 1rem 0.75rem 2.5rem;
+        border-radius: 8px;
+        border: 1px solid var(--light-gray);
+        background-color: white;
+        font-size: 0.9rem;
+        transition: var(--transition);
+        box-shadow: var(--card-shadow);
+    }
+
+    .search-input:focus {
+        outline: none;
+        border-color: var(--primary-light);
+        box-shadow: 0 0 0 3px rgba(72, 149, 239, 0.2);
+    }
+
+    .search-icon {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--gray);
+    }
+
+    /* Project Cards */
+    .project-list {
+        display: grid;
+        gap: 1.5rem;
+    }
+
+    .project-card {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: var(--card-shadow);
+        transition: var(--transition);
+        border: 1px solid var(--light-gray);
+    }
+
+    .project-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+
+    .project-header {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+        gap: 1rem;
+    }
+
+    .project-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--dark);
+        margin: 0;
+    }
+
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.25rem 0.75rem;
+        border-radius: 9999px;
+        font-size: 0.75rem;
+        font-weight: 500;
+        background-color: #e0f2fe;
+        color: #0369a1;
+    }
+
+    .project-description {
+        color: var(--gray);
+        margin-bottom: 1.5rem;
+        line-height: 1.5;
+    }
+
+    /* Project Details Grid */
+    .project-details-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .detail-item {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .detail-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background-color: var(--light-gray);
+        color: var(--primary);
+    }
+
+    .detail-label {
+        font-size: 0.75rem;
+        color: var(--gray);
+        margin-bottom: 0.25rem;
+    }
+
+    .detail-value {
+        font-weight: 500;
+        color: var(--dark);
+    }
+
+    /* Action Section */
+    .project-actions {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 1rem;
+    }
+
+    .remaining-amount {
+        text-align: right;
+    }
+
+    .amount-label {
+        font-size: 0.75rem;
+        color: var(--gray);
+    }
+
+    .amount-value {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--primary);
+    }
+
+    /* Complete Button - Maintained existing functionality */
+    .complete-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        font-weight: 500;
+        background-color: #10b981;
+        color: white;
+        border: none;
+        cursor: pointer;
+        transition: var(--transition);
+        gap: 0.5rem;
+    }
+
+    .complete-btn:hover {
+        background-color: #059669;
+        transform: translateY(-2px);
+        box-shadow: var(--card-shadow);
+    }
+
+    /* Empty State */
+    .empty-state {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 3rem 1rem;
+        text-align: center;
+    }
+
+    .empty-icon {
+        width: 80px;
+        height: 80px;
+        margin-bottom: 1rem;
+        color: var(--light-gray);
+    }
+
+    .empty-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--dark);
+        margin-bottom: 0.5rem;
+    }
+
+    .empty-text {
+        color: var(--gray);
+        max-width: 400px;
+        margin: 0 auto;
+    }
+
+    /* Floating Action Button - Maintained existing functionality */
+    .fab-btn {
+        position: fixed;
+        bottom: 2rem;
+        right: 2rem;
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        background-color: var(--primary);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        border: none;
+        cursor: pointer;
+        transition: var(--transition);
+        z-index: 100;
+    }
+
+    .fab-btn:hover {
+        background-color: var(--secondary);
+        transform: scale(1.1);
+    }
+
+    /* Modal Styles - Maintained existing functionality */
+    .work-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+    }
+
+    .work-modal.active {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    .modal-content {
+        background-color: white;
+        border-radius: 12px;
+        width: 100%;
+        max-width: 500px;
+        overflow: hidden;
+        transform: translateY(-20px);
+        transition: all 0.3s ease;
+    }
+
+    .work-modal.active .modal-content {
+        transform: translateY(0);
+    }
+
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1.5rem;
+        border-bottom: 1px solid var(--light-gray);
+    }
+
+    .modal-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--dark);
+        margin: 0;
+    }
+
+    .close-btn {
+        background: none;
+        border: none;
+        font-size: 1.25rem;
+        color: var(--gray);
+        cursor: pointer;
+        transition: var(--transition);
+    }
+
+    .close-btn:hover {
+        color: var(--danger);
+    }
+
+    .modal-body {
+        padding: 1.5rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.25rem;
+    }
+
+    .form-label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: var(--dark);
+    }
+
+    .form-input {
+        width: 100%;
+        padding: 0.75rem;
+        border-radius: 8px;
+        border: 1px solid var(--light-gray);
+        font-size: 0.9rem;
+        transition: var(--transition);
+    }
+
+    .form-input:focus {
+        outline: none;
+        border-color: var(--primary-light);
+        box-shadow: 0 0 0 3px rgba(72, 149, 239, 0.2);
+    }
+
+    .form-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 1rem;
+        padding: 1.5rem;
+        border-top: 1px solid var(--light-gray);
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 768px) {
+        .project-details-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        
+        .project-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        
+        .project-actions {
+            align-items: flex-start;
+            width: 100%;
+        }
+        
+        .remaining-amount {
+            text-align: left;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .project-details-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="ongoing-work-container">
+    <!-- Header with Search -->
+    <div class="page-header">
+        <h1 class="page-title">Ongoing Projects</h1>
+        <form method="GET" action="{% url 'ongoing_work' %}" class="search-container">
+            <div class="relative">
+                <input type="text" name="q" placeholder="Search projects..." value="{{ request.GET.q }}"
+                       class="search-input">
+                <button type="submit" class="search-icon">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Work List -->
+    <div class="project-list">
+        {% if ongoing_works %}
+            {% for work in ongoing_works %}
+                <div class="project-card">
+                    <div class="project-header">
+                        <h3 class="project-title">{{ work.project_name }}</h3>
+                        <span class="status-badge">
+                            <i class="fas fa-hourglass-half mr-1"></i> In Progress
+                        </span>
+                    </div>
+                    
+                    <p class="project-description">{{ work.description }}</p>
+                    
+                    <div class="project-details-grid">
+                        <div class="detail-item">
+                            <div class="detail-icon">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div>
+                                <div class="detail-label">Client</div>
+                                <div class="detail-value">{{ work.customer_name }}</div>
+                            </div>
+                        </div>
+                        
+                        <div class="detail-item">
+                            <div class="detail-icon">
+                                <i class="fas fa-calendar-alt"></i>
+                            </div>
+                            <div>
+                                <div class="detail-label">Started</div>
+                                <div class="detail-value">{{ work.start_date }}</div>
+                            </div>
+                        </div>
+                        
+                        <div class="detail-item">
+                            <div class="detail-icon">
+                                <i class="fas fa-money-bill-wave"></i>
+                            </div>
+                            <div>
+                                <div class="detail-label">Total</div>
+                                <div class="detail-value">RS {{ work.amount }}</div>
+                            </div>
+                        </div>
+                        
+                        <div class="detail-item">
+                            <div class="detail-icon">
+                                <i class="fas fa-hand-holding-usd"></i>
+                            </div>
+                            <div>
+                                <div class="detail-label">Advance</div>
+                                <div class="detail-value">RS {{ work.advance_payment }}</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
+                        <div class="project-actions">
+                            <div class="remaining-amount">
+                                <div class="amount-label">Remaining Amount</div>
+                                <div class="amount-value">RS {{ work.remaining_amount }}</div>
+                            </div>
+                            <button onclick="markAsComplete({{ work.id }})" 
+                                    class="complete-btn">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Mark Complete</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-state">
+                <div class="empty-icon">
+                    <i class="fas fa-clipboard-list fa-3x"></i>
+                </div>
+                <h3 class="empty-title">No ongoing projects</h3>
+                <p class="empty-text">You don't have any ongoing projects right now. Click the + button to add a new project.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Floating Action Button -->
+<button id="addWorkBtn" class="fab-btn">
+    <i class="fas fa-plus"></i>
+</button>
+
+<!-- Modal Form -->
+<div id="workModal" class="work-modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 class="modal-title">Add New Project</h3>
+            <button id="closeModalBtn" class="close-btn">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <form method="POST" action="{% url 'add_ongoing_work' %}">
+            {% csrf_token %}
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="project_name" class="form-label">Project Name</label>
+                    <input type="text" id="project_name" name="project_name" placeholder="Website Redesign" 
+                           class="form-input" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="customer_name" class="form-label">Client Name</label>
+                    <input type="text" id="customer_name" name="customer_name" placeholder="John Smith" 
+                           class="form-input" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="description" class="form-label">Description</label>
+                    <textarea id="description" name="description" rows="3" placeholder="Project details..."
+                              class="form-input"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="start_date" class="form-label">Start Date</label>
+                    <input type="date" id="start_date" name="start_date" 
+                           class="form-input" required>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="form-group">
+                        <label for="amount" class="form-label">Total Amount (RS)</label>
+                        <input type="number" id="amount" name="amount" placeholder="50000" 
+                               class="form-input" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="advance_payment" class="form-label">Advance (RS)</label>
+                        <input type="number" id="advance_payment" name="advance_payment" placeholder="15000" 
+                               class="form-input" required>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-footer">
+                <button type="submit" class="complete-btn">
+                    Add Project
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    // Existing JavaScript remains exactly the same
+    // Modal functionality
+    const modal = document.getElementById('workModal');
+    const addBtn = document.getElementById('addWorkBtn');
+    const closeBtn = document.getElementById('closeModalBtn');
+    
+    addBtn.addEventListener('click', () => {
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('start_date').value = today;
+    });
+    
+    closeBtn.addEventListener('click', () => {
+        modal.classList.remove('active');
+        document.body.style.overflow = 'auto';
+    });
+    
+    window.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+    });
+
+    // Mark as complete functionality
+    function markAsComplete(workId) {
+        if (confirm('Are you sure you want to mark this project as complete?')) {
+            // Show loading state
+            const button = event.target.closest('button');
+            const originalContent = button.innerHTML;
+            button.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Processing...';
+            button.disabled = true;
+            
+            fetch("{% url 'mark_as_complete' %}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": "{{ csrf_token }}"
+                },
+                body: JSON.stringify({ id: workId })
+            }).then(response => {
+                if (response.ok) {
+                    location.reload();
+                } else {
+                    button.innerHTML = originalContent;
+                    button.disabled = false;
+                    alert('Error marking project as complete. Please try again.');
+                }
+            }).catch(error => {
+                button.innerHTML = originalContent;
+                button.disabled = false;
+                alert('Network error. Please try again.');
+            });
+        }
+    }
+
+    // Form validation
+    document.querySelector('form').addEventListener('submit', function(e) {
+        const amount = parseFloat(document.getElementById('amount').value);
+        const advance = parseFloat(document.getElementById('advance_payment').value);
+        
+        if (advance > amount) {
+            e.preventDefault();
+            alert('Advance payment cannot be greater than total amount');
+            document.getElementById('advance_payment').focus();
+        }
+    });
+</script>
+{% endblock %}

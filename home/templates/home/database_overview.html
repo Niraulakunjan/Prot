@@ -1,0 +1,393 @@
+{% extends 'home/base.html' %}
+
+{% block title %}Database Overview{% endblock %}
+
+{% block content %}
+<style>
+    :root {
+        --primary: #6b46c1;
+        --primary-light: #a78bfa;
+        --dark: #1f2937;
+        --light: #f8fafc;
+        --gray: #6b7280;
+        --light-gray: #e5e7eb;
+        --success: #06b6d4;
+        --warning: #f59e0b;
+        --danger: #dc2626;
+        --info: #3b82f6;
+        --card-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+        --border-radius: 12px;
+    }
+
+    body {
+        font-family: 'Inter', 'Poppins', sans-serif;
+        background: linear-gradient(135deg, #f1f5f9, #e0e7ff);
+        color: var(--dark);
+        line-height: 1.6;
+        min-height: 100vh;
+        font-size: 16px;
+    }
+
+    .container {
+        max-width: 1280px;
+        margin: 2rem auto;
+        padding: 2rem;
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: var(--border-radius);
+        box-shadow: var(--card-shadow);
+    }
+
+    h1, h2 {
+        color: var(--dark);
+        font-weight: 700;
+        text-align: center;
+    }
+
+    h1 {
+        font-size: 2.5rem;
+        margin-bottom: 2.5rem;
+        position: relative;
+    }
+
+    h1::after {
+        content: '';
+        position: absolute;
+        bottom: -0.75rem;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 120px;
+        height: 4px;
+        background: var(--primary);
+        border-radius: 2px;
+    }
+
+    h2 {
+        font-size: 1.5rem;
+        margin: 2rem 0 1rem;
+    }
+
+    .cards-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .card {
+        background: rgba(255, 255, 255, 0.9);
+        border: 1px solid var(--light-gray);
+        border-radius: var(--border-radius);
+        padding: 1.5rem;
+        box-shadow: var(--card-shadow);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-header {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--primary);
+        margin-bottom: 1rem;
+        border-bottom: 1px solid var(--light-gray);
+        padding-bottom: 0.5rem;
+    }
+
+    .card-content {
+        display: grid;
+        gap: 0.75rem;
+    }
+
+    .card-item {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.95rem;
+    }
+
+    .card-item strong {
+        color: var(--dark);
+        font-weight: 500;
+    }
+
+    .card-item span {
+        color: var(--gray);
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 2rem;
+        color: var(--gray);
+        font-size: 1.1rem;
+        font-style: italic;
+    }
+
+    @media (max-width: 768px) {
+        .container {
+            margin: 1rem;
+            padding: 1.5rem;
+        }
+
+        h1 {
+            font-size: 2rem;
+        }
+
+        h2 {
+            font-size: 1.25rem;
+        }
+
+        .cards-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 480px) {
+        h1 {
+            font-size: 1.75rem;
+        }
+
+        .card {
+            padding: 1rem;
+        }
+
+        .card-item {
+            font-size: 0.85rem;
+        }
+    }
+</style>
+
+<div class="container">
+    <h1>Database Overview</h1>
+
+    <!-- Users -->
+    <h2>Users</h2>
+    {% if users %}
+        <div class="cards-grid">
+            {% for user in users %}
+                <div class="card">
+                    <div class="card-header">{{ user.email }}</div>
+                    <div class="card-content">
+                        <div class="card-item">
+                            <strong>First Name:</strong>
+                            <span>{{ user.first_name|default:"N/A" }}</span>
+                        </div>
+                        <div class="card-item">
+                            <strong>Last Name:</strong>
+                            <span>{{ user.last_name|default:"N/A" }}</span>
+                        </div>
+                        <div class="card-item">
+                            <strong>Joined:</strong>
+                            <span>{{ user.date_joined|date:"Y-m-d" }}</span>
+                        </div>
+                        <div class="card-item">
+                            <strong>Active:</strong>
+                            <span>{{ user.is_active|yesno:"Yes,No" }}</span>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="empty-state">No users found.</p>
+    {% endif %}
+
+    <!-- OTPs -->
+    <h2>OTPs</h2>
+    {% if otps %}
+        <div class="cards-grid">
+            {% for otp in otps %}
+                <div class="card">
+                    <div class="card-header">{{ otp.email|default:"Unknown" }}</div>
+                    <div class="card-content">
+                        <div class="card-item">
+                            <strong>OTP:</strong>
+                            <span>{{ otp.otp }}</span>
+                        </div>
+                        <div class="card-item">
+                            <strong>Created:</strong>
+                            <span>{{ otp.created_at|date:"Y-m-d H:i" }}</span>
+                        </div>
+                        <div class="card-item">
+                            <strong>Verified:</strong>
+                            <span>{{ otp.is_verified|yesno:"Yes,No" }}</span>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="empty-state">No OTPs found.</p>
+    {% endif %}
+
+    <!-- Customers -->
+    <h2>Customers</h2>
+    {% if customers %}
+        <div class="cards-grid">
+            {% for customer in customers %}
+                <div class="card">
+                    <div class="card-header">{{ customer.name }}</div>
+                    <div class="card-content">
+                        <div class="card-item">
+                            <strong>Email:</strong>
+                            <span>{{ customer.email|default:"N/A" }}</span>
+                        </div>
+                        <div class="card-item">
+                            <strong>Phone:</strong>
+                            <span>{{ customer.phone|default:"N/A" }}</span>
+                        </div>
+                        <div class="card-item">
+                            <strong>Address:</strong>
+                            <span>{{ customer.address|default:"N/A" }}</span>
+                        </div>
+                        <div class="card-item">
+                            <strong>Created:</strong>
+                            <span>{{ customer.created_at|date:"Y-m-d" }}</span>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="empty-state">No customers found.</p>
+    {% endif %}
+
+    <!-- Customer Plans -->
+    <h2>Customer Plans</h2>
+    {% if customer_plans %}
+        <div class="cards-grid">
+            {% for plan in customer_plans %}
+                <div class="card">
+                    <div class="card-header">{{ plan.customer.name }} - {{ plan.plan_name }}</div>
+                    <div class="card-content">
+                        <div class="card-item">
+                            <strong>Service:</strong>
+                            <span>{{ plan.service_name }}</span>
+                        </div>
+                        <div class="card-item">
+                            <strong>Duration:</strong>
+                            <span>{{ plan.get_plan_duration_display }}</span>
+                        </div>
+                        <div class="card-item">
+                            <strong>Price:</strong>
+                            <span>RS {{ plan.price }}</span>
+                        </div>
+                        <div class="card-item">
+                            <strong>Discount:</strong>
+                            <span>{{ plan.discount }}%</span>
+                        </div>
+                        <div class="card-item">
+                            <strong>Dates:</strong>
+                            <span>{{ plan.start_date|date:"Y-m-d" }} to {{ plan.end_date|date:"Y-m-d" }}</span>
+                        </div>
+                        <div class="card-item">
+                            <strong>Plan ID:</strong>
+                            <span>{{ plan.plan_id }}</span>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="empty-state">No customer plans found.</p>
+    {% endif %}
+
+    <!-- Completed Work -->
+    <h2>Completed Work</h2>
+    {% if completed_works %}
+        <div class="cards-grid">
+            {% for work in completed_works %}
+                <div class="card">
+                    <div class="card-header">{{ work.project_name }}</div>
+                    <div class="card-content">
+                        <div class="card-item">
+                            <strong>Customer:</strong>
+                            <span>{{ work.customer_name }}</span>
+                        </div>
+                        <div class="card-item">
+                            <strong>Date:</strong>
+                            <span>{{ work.date|date:"Y-m-d" }}</span>
+                        </div>
+                        <div class="card-item">
+                            <strong>Days Taken:</strong>
+                            <span>{{ work.days_taken }}</span>
+                        </div>
+                        <div class="card-item">
+                            <strong>Amount:</strong>
+                            <span>RS {{ work.amount }}</span>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="empty-state">No completed work found.</p>
+    {% endif %}
+
+    <!-- Ongoing Work -->
+    <h2>Ongoing Work</h2>
+    {% if ongoing_works %}
+        <div class="cards-grid">
+            {% for work in ongoing_works %}
+                <div class="card">
+                    <div class="card-header">{{ work.project_name }}</div>
+                    <div class="card-content">
+                        <div class="card-item">
+                            <strong>Customer:</strong>
+                            <span>{{ work.customer_name }}</span>
+                        </div>
+                        <div class="card-item">
+                            <strong>Start Date:</strong>
+                            <span>{{ work.start_date|date:"Y-m-d" }}</span>
+                        </div>
+                        <div class="card-item">
+                            <strong>Amount:</strong>
+                            <span>RS {{ work.amount }}</span>
+                        </div>
+                        <div class="card-item">
+                            <strong>Advance:</strong>
+                            <span>RS {{ work.advance_payment }}</span>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="empty-state">No ongoing work found.</p>
+    {% endif %}
+
+    <!-- Payments -->
+    <h2>Payments</h2>
+    {% if payments %}
+        <div class="cards-grid">
+            {% for payment in payments %}
+                <div class="card">
+                    <div class="card-header">{{ payment.project_name }}</div>
+                    <div class="card-content">
+                        <div class="card-item">
+                            <strong>Customer:</strong>
+                            <span>{{ payment.customer_name }}</span>
+                        </div>
+                        <div class="card-item">
+                            <strong>Type:</strong>
+                            <span>{{ payment.payment_type }}</span>
+                        </div>
+                        <div class="card-item">
+                            <strong>Amount:</strong>
+                            <span>RS {{ payment.amount }}</span>
+                        </div>
+                        <div class="card-item">
+                            <strong>Date:</strong>
+                            <span>{{ payment.date|date:"Y-m-d" }}</span>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="empty-state">No payments found.</p>
+    {% endif %}
+</div>
+{% endblock %}

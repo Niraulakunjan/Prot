@@ -1,0 +1,62 @@
+<!-- filepath: /Users/kunjanniraula/Desktop/Prot/home/templates/home/email_templates/about_myself_email.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About My Services</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+        }
+
+        .email-container {
+            max-width: 600px;
+            margin: 20px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        p {
+            font-size: 16px;
+            color: #555;
+            line-height: 1.5;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #3498db;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 20px;
+            font-size: 16px;
+        }
+
+        .button:hover {
+            background-color: #2980b9;
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <h1>About My Services</h1>
+        <p>Hello,</p>
+        <p>I offer a variety of services to help you achieve your goals. Whether you're looking for web development, System Devlopment, project management, or consulting, I'm here to assist you.</p>
+        <p>For more details, please click the button below to visit my website:</p>
+        <a href="{{ website_url }}" class="button">Visit My Website</a>
+    </div>
+</body>
+</html>

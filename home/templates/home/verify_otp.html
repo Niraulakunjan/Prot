@@ -1,0 +1,27 @@
+<!-- home/templates/home/verify_otp.html -->
+{% extends 'base.html' %}
+{% block title %}Verify OTP - Portfolio{% endblock %}
+{% block content %}
+    <div class="form-box">
+        {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                    <p class="{% if message.tags == 'success' %}success{% else %}error{% endif %}">{{ message }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+        
+        <h2>Enter OTP</h2>
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label>OTP:</label>
+                <input type="text" name="otp" required>
+            </div>
+            <button type="submit" class="btn-primary">Verify</button>
+        </form>
+        <div class="link">
+            <a href="{% url 'register' %}">Resend OTP</a>
+        </div>
+    </div>
+{% endblock %}
